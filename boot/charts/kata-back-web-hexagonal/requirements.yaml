@@ -1,0 +1,5 @@
+dependencies:
+- name: springboot-service
+  version: ~6.4.0
+  repository: https://artifactory.gcp.mercadona.com/artifactory/virtual-helm/
+  alias: springboot-service # Must have identical value to "dependencies.name"

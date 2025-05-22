@@ -1,0 +1,32 @@
+{
+  "global": {
+    "appName": "kata-back-web-hexagonal"
+  },
+  "maven": {
+    "buildType": "MODULE",
+    "buildModuleName": "boot",
+    "registry": {
+      "release": {
+        "repo": "core-maven-release"
+      }
+    }
+  },
+  "docker": {
+    "dockerfilePath": "boot/Dockerfile",
+    "registryTargetName": "producto-docker-release",
+    "useCacheFromPreviousBuild": true,
+    "buildArgs": [],
+    "extraArgs": ""
+  },
+  "helm": {
+    "chartDirPath": "boot/charts/kata-back-web-hexagonal",
+    "repositoryTargetName": "producto-helm-release"
+  },
+  "checkmarx": {
+    "presetType": "JAVA",
+    "team": "mercadona-adhoc"
+  },
+  "jira": {
+    "issuePrefix": "FWCN"
+  }
+}
