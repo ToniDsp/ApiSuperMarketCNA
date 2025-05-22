@@ -1,31 +1,30 @@
-🧠 Kata - Gestión de Lotes con Descuentos Automáticos
+🧠 Kata - Batch Management with Automatic Discounts
+🛒 Context
+This microservice simulates a real functionality used at Mercadona to manage products with short expiration dates (such as Bakery or Ready-to-Eat items). It automates the application of discounts to product batches that are close to expiration, helping reduce waste and optimize stock rotation in stores.
 
-🛒 Contexto:
+🎯 What does this service do?
+Allows querying, registering, and updating product batches assigned to specific stores.
 
-Este microservicio simula una funcionalidad real de Mercadona para gestionar productos con fecha de caducidad corta (como los del Horno o Listo para Comer). Automatiza la aplicación de descuentos en lotes de productos próximos a vencer, evitando pérdidas y optimizando la rotación de stock en tienda.
+Automatically applies discounts to products close to their expiration date.
 
-🎯 ¿Qué hace este servicio?
+Ensures that discounts are only applied if the batch is not expired, already discounted, or marked as removed.
 
-Permite consultar, registrar y modificar lotes de productos asignados a tiendas.
-Aplica automáticamente descuentos a productos si están cerca de su fecha de caducidad.
+Exposes discount statistics per store.
 
-Asegura que solo se apliquen descuentos si el lote no está caducado, rebajado o retirado.
+Implements validations to prevent inconsistencies, such as duplicate entries or invalid dates.
 
-Expone estadísticas sobre las rebajas aplicadas en cada tienda.
+Follows clean architecture principles (hexagonal) with clear separation of concerns between layers.
 
-Implementa validaciones para evitar inconsistencias, como duplicados o fechas incorrectas.
-Todo ello siguiendo principios de arquitectura limpia (hexagonal), con separación clara entre capas.
-
-🧱 Tecnologías utilizadas
+🧱 Technologies Used
 Java 17+
 
 Spring Boot
 
-Arquitectura hexagonal (puertos y adaptadores)
+Hexagonal architecture (Ports and Adapters)
 
-MapStruct para mapeo de objetos
+MapStruct for object mapping
 
-JPA (con base de datos en memoria o PostgreSQL)
+JPA (with in-memory database or PostgreSQL)
 
 Maven
 
@@ -33,49 +32,42 @@ Lombok
 
 Flyway
 
-📐 Estructura del sistema
-El microservicio expone una serie de endpoints REST para gestionar los lotes en distintas tiendas. Incluye operaciones como:
+📐 System Structure
+The microservice exposes a set of REST endpoints to manage product batches across different stores. It includes the following operations:
 
-📦 Gestión de Lotes
-Acción	Endpoint	Descripción
+📦 Batch Management
+Action	Endpoint	Description
+🔍 Get near-expiring batches	GET /stores/{storeCode}/batches/near-expiration	Returns batches that are not expired or discounted and expire in 2 days or less.
+💸 Apply discount	PATCH /stores/{storeCode}/batches/{batchId}/discount	Applies a discount if the batch meets all conditions (not expired, not discounted, not removed).
+➕ Create batch	POST /stores/{storeCode}/batches	Registers a new batch for a store. Validates duplicate entries and expiration dates.
+📋 List store batches	GET /stores/{storeCode}/batches	Returns all batches, with filters by product, status, and pagination support.
+🚫 Mark batch as removed	PATCH /stores/{storeCode}/batches/{batchId}/remove	Marks a batch as removed so it’s no longer available in-store.
+📊 Discount statistics	GET /stores/{storeCode}/batches/discount-stats	Provides metrics about the discounts applied by store.
+🗑️ Delete batch	DELETE /stores/{storeCode}/batches/{batchId}	Completely deletes a batch if it hasn’t been used or discounted.
 
-🔍 Consultar lotes próximos a caducar	GET /stores/{storeCode}/batches/near-expiration	Devuelve lotes no caducados ni rebajados, cuya fecha de caducidad esté a 2 días o menos.
+✅ Key Business Logic
+A batch is considered expired when the current date is past its expirationDate.
 
-💸 Aplicar descuento	PATCH /stores/{storeCode}/batches/{batchId}/discount	Aplica un descuento si el lote cumple los criterios (no caducado, no rebajado, no retirado).
+A batch is eligible for automatic discount if it will expire in 2 days or less.
 
-➕ Crear lote	POST /stores/{storeCode}/batches	Registra un nuevo lote para una tienda. Valida duplicados y fechas.
+A batch cannot be discounted more than once or if it is already marked as removed.
 
-📋 Listar lotes de tienda	GET /stores/{storeCode}/batches	Devuelve todos los lotes, con filtros por producto, estado y paginación.
+Validations include ensuring future expiration dates, avoiding duplicates, and checking valid status transitions.
 
-🚫 Marcar lote como retirado	PATCH /stores/{storeCode}/batches/{batchId}/remove	Marca el lote como retirado para que no esté disponible.
+🧪 Best Practices and Code Quality
+Clean separation of layers: domain, application, infrastructure, controllers.
 
-📊 Estadísticas de rebajas	GET /stores/{storeCode}/batches/discount-stats	Muestra métricas de descuentos aplicados por tienda.
+Includes unit tests.
 
-🗑️ Eliminar lote	DELETE /stores/{storeCode}/batches/{batchId}	Elimina completamente un lote si no ha sido usado ni rebajado.
+(Optional) Integration testing and auditing.
 
-✅ Lógica de negocio clave
-Un lote caduca cuando la fecha actual supera su expirationDate.
+Preloaded demo data for testing and development.
 
-Se puede aplicar un descuento automático si quedan 2 días o menos para su caducidad.
+🌱 Potential Evolutions
+Batch management by product categories with custom discount rules.
 
-Un lote no puede ser rebajado más de una vez, ni si está retirado.
+Configurable expiration thresholds per store, section, or product type.
 
-Se validan condiciones como fechas futuras, duplicidad de lotes y estados incompatibles.
+Automated notifications to store managers.
 
-🧪 Buenas prácticas y calidad
-Código organizado por capas: dominio, aplicación, infraestructura, controladores.
-
-Tests unitarios incluidos.
-
-(Opcional) Tests de integración y auditoría.
-
-Datos precargados para facilitar pruebas.
-
-🌱 Posibles evoluciones
-Soporte para categorías de productos con lógica de descuento distinta.
-
-Configuración de umbrales de caducidad por tienda, sección o tipo de producto.
-
-Notificaciones automáticas a responsables de tienda.
-
-Panel de administración para gestionar reglas de descuento.
+Admin panel to manage discount rules.
